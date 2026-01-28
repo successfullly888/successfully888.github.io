@@ -413,7 +413,7 @@
         }
 
         async function callGemini(systemPrompt, userPrompt, isJson = false) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{parts: [{text: userPrompt}]}],
                 systemInstruction: {parts: [{text: systemPrompt}]},
@@ -450,10 +450,13 @@
 2. 生成断裂指令：结合正念、行为疗法，可以是一个纯物理动作，一件回归当下简单的小事，动词开头，可以根据情况适当结合天气/时间。
 [输出格式] JSON: {"feedback": "1句回应", "instruction": "一行口令"}`;
 
-            const res = await callGemini(currentP.systemPrompt, prompt, true);
-            if(res) {
-                const data = JSON.parse(res);
-                currentInstruction = sanitizeText(data.instruction);
+          const res = await callGemini(currentP.systemPrompt, prompt, true);
+if(res) {
+    // 这里的正则表达式是清洗掉 AI 可能返回的 Markdown 标签 (```json ...)
+    const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
+    const data = JSON.parse(cleanJson);
+    currentInstruction = sanitizeText(data.instruction);
+    // ... 后续代码
                 document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
                 btn.classList.add('hidden');
                 document.getElementById('section-stage-1').classList.remove('hidden');
@@ -475,10 +478,12 @@
 3. 记录引导：1句短句邀请。
 [输出格式] JSON: {"bridge": "反馈 + 具体的入轨行动指引 (必须落脚于接下来的工作学习)", "record": "记录契机邀请"}`;
 
-            const res = await callGemini(currentP.systemPrompt, prompt, true);
-            if(res) {
-                const data = JSON.parse(res);
-                document.getElementById('display-combined-instruction').innerText = sanitizeText(data.bridge);
+           const res = await callGemini(currentP.systemPrompt, prompt, true);
+if(res) {
+    const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
+    const data = JSON.parse(cleanJson);
+    document.getElementById('display-combined-instruction').innerText = sanitizeText(data.bridge);
+    // ... 后续代码
                 document.getElementById('section-stage-1').classList.add('hidden');
                 document.getElementById('section-stage-2').classList.remove('hidden');
                 document.getElementById('section-stage-2').scrollIntoView({ behavior: 'smooth' });
@@ -563,3 +568,4 @@
 </body>
 
 </html>
+
