@@ -417,7 +417,7 @@
             const payload = {
                 contents: [{parts: [{text: userPrompt}]}],
                 systemInstruction: {parts: [{text: systemPrompt}]},
-                generationConfig: isJson ? {responseMimeType: "application/json"} : { temperature: 0.85 }
+                generationConfig: isJson ? { responseMimeType: "application/json", temperature: 0.1 } : { temperature: 0.85 }
             };
             
             const maxRetries = 5;
@@ -434,63 +434,65 @@
             }
         }
 
-        document.getElementById('btn-start-reboot').onclick = async () => {
-            if(!currentP) return;
-            const btn = document.getElementById('btn-start-reboot');
-            const score = document.getElementById('mood').value;
-            const wt = `${document.getElementById('time').innerText} ${document.getElementById('weatherInfo').innerText}`;
-            const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
+       document.getElementById('btn-start-reboot').onclick = async () => {
+    if(!currentP) return;
+    const btn = document.getElementById('btn-start-reboot');
+    const score = document.getElementById('mood').value;
+    const wt = `${document.getElementById('time').innerText} ${document.getElementById('weatherInfo').innerText}`;
+    const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
 
-            btn.disabled = true;
-            btn.innerText = "正在切断重启...";
+    btn.disabled = true;
+    btn.innerText = "正在切断重启...";
 
-            const prompt = `用户评分：${score}/100；天气时间：${wt}；用户倾诉：${userInput}；选择角色：${currentP.name}。
+    const prompt = `用户评分：${score}/100；天气时间：${wt}；用户倾诉：${userInput}；选择角色：${currentP.name}。
 [生成任务]
 1. 根据评分进行角色化回应。
-2. 生成断裂指令：结合正念、行为疗法，可以是一个纯物理动作，一件回归当下简单的小事，动词开头，可以根据情况适当结合天气/时间。
-[输出格式] JSON: {"feedback": "1句回应", "instruction": "一行口令"}`;
+2. 生成断裂指令：一个纯物理动作，动词开头。
+[输出格式] 严格JSON: {"feedback": "1句回应", "instruction": "一行口令"}`;
 
-          const res = await callGemini(currentP.systemPrompt, prompt, true);
-if(res) {
-    // 这里的正则表达式是清洗掉 AI 可能返回的 Markdown 标签 (```json ...)
-    const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
-    const data = JSON.parse(cleanJson);
-    currentInstruction = sanitizeText(data.instruction);
-    // ... 后续代码
-                document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
-                btn.classList.add('hidden');
-                document.getElementById('section-stage-1').classList.remove('hidden');
-                document.getElementById('section-stage-1').scrollIntoView({ behavior: 'smooth' });
-            }
-            btn.disabled = false;
-            btn.innerText = "生成重启指令";
-        };
+    const res = await callGemini(currentP.systemPrompt, prompt, true);
+    if(res) {
+        try {
+            const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
+            const data = JSON.parse(cleanJson);
+            currentInstruction = sanitizeText(data.instruction);
+            document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
+            btn.classList.add('hidden');
+            document.getElementById('section-stage-1').classList.remove('hidden');
+            document.getElementById('section-stage-1').scrollIntoView({ behavior: 'smooth' });
+        } catch(e) {
+            console.error("JSON解析失败", e);
+            alert("同步频率失败，请再试一次");
+        }
+    }
+    btn.disabled = false;
+    btn.innerText = "生成重启指令";
+};
 
-        document.getElementById('btn-confirm-break').onclick = async () => {
-            const btn = document.getElementById('btn-confirm-break');
-            btn.disabled = true;
-            btn.innerText = "重塑认知中...";
+       document.getElementById('btn-confirm-break').onclick = async () => {
+    const btn = document.getElementById('btn-confirm-break');
+    btn.disabled = true;
+    btn.innerText = "重塑认知中...";
 
-            const prompt = `用户刚才完成了断裂指令：${currentInstruction}；选择角色：${currentP.name}。
-[生成任务]
-1. 行为确认：给予正面的反馈，确认重启已发生。
-2. 入轨指令：提供一个极度具体的“2分钟入轨法”，终点必须是引导用户投入接下来的工作、学习或深度行动（例如：打开文档写第一个词、清理桌面开始阅读）。
-3. 记录引导：1句短句邀请。
-[输出格式] JSON: {"bridge": "反馈 + 具体的入轨行动指引 (必须落脚于接下来的工作学习)", "record": "记录契机邀请"}`;
+    const prompt = `用户刚才完成了断裂指令：${currentInstruction}；选择角色：${currentP.name}。
+[输出格式] 严格JSON: {"bridge": "反馈+具体入轨行动指引"}`;
 
-           const res = await callGemini(currentP.systemPrompt, prompt, true);
-if(res) {
-    const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
-    const data = JSON.parse(cleanJson);
-    document.getElementById('display-combined-instruction').innerText = sanitizeText(data.bridge);
-    // ... 后续代码
-                document.getElementById('section-stage-1').classList.add('hidden');
-                document.getElementById('section-stage-2').classList.remove('hidden');
-                document.getElementById('section-stage-2').scrollIntoView({ behavior: 'smooth' });
-            }
-            btn.disabled = false;
-            btn.innerText = "我已完成";
-        };
+    const res = await callGemini(currentP.systemPrompt, prompt, true);
+    if(res) {
+        try {
+            const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
+            const data = JSON.parse(cleanJson);
+            document.getElementById('display-combined-instruction').innerText = sanitizeText(data.bridge);
+            document.getElementById('section-stage-1').classList.add('hidden');
+            document.getElementById('section-stage-2').classList.remove('hidden');
+            document.getElementById('section-stage-2').scrollIntoView({ behavior: 'smooth' });
+        } catch(e) {
+            console.error("JSON解析失败", e);
+        }
+    }
+    btn.disabled = false;
+    btn.innerText = "我已完成";
+};
 
         const modal = document.getElementById('modal');
         document.getElementById('btn-open-record').onclick = () => {
@@ -568,5 +570,6 @@ if(res) {
 </body>
 
 </html>
+
 
 
