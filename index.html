@@ -4,117 +4,383 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瞬息重启 | Bridge to Reality</title>
-    <link rel="icon" href="https://fav.farm/🍃" />
+    <link rel="icon" href="https://fav.farm/🍃" /> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root { --theme-primary: #334155; --theme-bg: #f8fafc; }
-        body { font-family: 'Inter', 'Noto Serif SC', serif; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); min-height: 100vh; transition: background 1.5s ease; overflow-x: hidden; }
-        .glass-panel { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 32px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); }
-        .persona-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid transparent; background: rgba(255, 255, 255, 0.3); }
-        .persona-card.active { background: white; border-color: var(--theme-color, #334155); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        .mood-slider { -webkit-appearance: none; width: 100%; height: 6px; background: linear-gradient(to right, #94a3b8, #475569, #ef4444); border-radius: 10px; cursor: pointer; }
-        .mood-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #fff; border: 2px solid var(--theme-color, #334155); border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .chat-container { border: 1px solid rgba(0, 0, 0, 0.08); }
-        .typing-indicator { display: flex; gap: 4px; padding: 12px 20px; background: rgba(0,0,0,0.03); border-radius: 1.5rem; width: fit-content; margin-bottom: 1rem; }
-        .typing-dot { width: 5px; height: 5px; background: #94a3b8; border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out both; }
-        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
-        #sticky-note-container { display: flex; overflow-x: auto; padding: 20px 0; gap: 20px; }
-        .sticky-note { background: #fff; padding: 1.5rem; border-left: 6px solid var(--note-color, #334155); width: 280px; flex-shrink: 0; box-shadow: 5px 5px 15px rgba(0,0,0,0.05); }
+        :root {
+            --theme-primary: #334155;
+            --theme-bg: #f8fafc;
+        }
+        body {
+            font-family: 'Inter', 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            transition: background 1.5s ease;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+        .persona-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .persona-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0,0,0,0.05);
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.1);
+        }
+        .persona-card.active {
+            background: white;
+            border-color: var(--theme-color, #334155);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .mood-slider {
+            -webkit-appearance: none;
+            width: 100%; height: 6px;
+            background: linear-gradient(to right, #94a3b8, #475569, #ef4444);
+            border-radius: 10px;
+            cursor: pointer;
+            outline: none;
+        }
+        .mood-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px; height: 24px;
+            background: #fff;
+            border: 2px solid var(--theme-color, #334155);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .mood-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+        .tick-mark { width: 1px; height: 4px; background: rgba(0,0,0,0.1); }
+
+        .chat-container { border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); }
+        .bridge-card { background: white;
+        border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+
+        .btn-reset-chat { transition: transform 0.3s ease; }
+        .btn-reset-chat:hover { transform: rotate(180deg); }
+
+        .sticky-note {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 2px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+            position: relative;
+            border-left: 6px solid var(--note-color, #334155);
+            width: 280px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .sticky-note:hover { transform: translateY(-5px);
+        box-shadow: 10px 10px 20px rgba(0,0,0,0.08); }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 1.5rem;
+            width: fit-content;
+            border-top-left-radius: 0;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        .typing-dot {
+            width: 5px;
+            height: 5px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        #sticky-note-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px 0;
+            gap: 20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .sticky-note { scroll-snap-align: start; }
     </style>
 </head>
 <body class="p-4 md:p-8 flex flex-col items-center pb-24">
+
+    <div id="aura" class="fixed inset-0 pointer-events-none opacity-30 transition-all duration-1000"></div>
+
     <header class="w-full max-w-2xl text-center mt-6 mb-12 z-10">
         <div id="time" class="text-7xl font-extralight tracking-tighter text-slate-800 mb-2">00:00</div>
         <div id="weatherBox" class="flex items-center justify-center space-x-3 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">
-            <span id="date">----.--.--</span> | <span><i data-lucide="map-pin" class="inline w-3 h-3"></i> <span id="location">定位中...</span></span> | <span id="weatherInfo">感应中...</span>
+            <span id="date">----.--.--</span>
+            <span class="opacity-30">|</span>
+            <span class="flex items-center"><i data-lucide="map-pin" class="w-3 h-3 mr-1"></i><span id="location">定位中...</span></span>
+            <span class="opacity-30">|</span>
+            <span id="weatherInfo">感应天气中...</span>
         </div>
     </header>
 
     <main class="w-full max-w-2xl space-y-6 z-10">
         <section class="glass-panel p-8">
+            <h2 class="text-xs font-bold text-slate-400 mb-8 text-center tracking-widest italic">“此刻，你希望我如何陪你重启？”</h2>
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="selectPersona('weiguang')" id="p-weiguang" class="persona-card p-5 rounded-3xl text-left">☁️ <strong>微光</strong><p class="text-[10px] text-slate-400">温柔陪伴</p></button>
-                <button onclick="selectPersona('kongshan')" id="p-kongshan" class="persona-card p-5 rounded-3xl text-left">🍃 <strong>空山</strong><p class="text-[10px] text-slate-400">消除噪音</p></button>
-                <button onclick="selectPersona('lingjing')" id="p-lingjing" class="persona-card p-5 rounded-3xl text-left">💠 <strong>棱镜</strong><p class="text-[10px] text-slate-400">脑科拆解</p></button>
-                <button onclick="selectPersona('huohua')" id="p-huohua" class="persona-card p-5 rounded-3xl text-left">🔥 <strong>火花</strong><p class="text-[10px] text-slate-400">行动推力</p></button>
+                <button onclick="selectPersona('weiguang')" id="p-weiguang" class="persona-card group p-5 rounded-3xl text-left flex items-start space-x-3">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">☁️</span>
+                    <div>
+                        <div class="text-sm font-bold text-slate-700">微光</div>
+                        <p class="text-[10px] text-slate-400 mt-1 leading-tight">我很累，请温柔地抱抱我</p>
+                    </div>
+                </button>
+                <button onclick="selectPersona('kongshan')" id="p-kongshan" class="persona-card group p-5 rounded-3xl text-left flex items-start space-x-3">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">🍃</span>
+                    <div>
+                        <div class="text-sm font-bold text-slate-700">空山</div>
+                        <p class="text-[10px] text-slate-400 mt-1 leading-tight">太乱了，帮我关掉大脑里的噪音</p>
+                    </div>
+                </button>
+                <button onclick="selectPersona('lingjing')" id="p-lingjing" class="persona-card group p-5 rounded-3xl text-left flex items-start space-x-3">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">💠</span>
+                    <div>
+                        <div class="text-sm font-bold text-slate-700">棱镜</div>
+                        <p class="text-[10px] text-slate-400 mt-1 leading-tight">很迷茫，我想明白大脑发生了什么</p>
+                    </div>
+                </button>
+                <button onclick="selectPersona('huohua')" id="p-huohua" class="persona-card group p-5 rounded-3xl text-left flex items-start space-x-3">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">🔥</span>
+                    <div>
+                        <div class="text-sm font-bold text-slate-700">火花</div>
+                        <p class="text-[10px] text-slate-400 mt-1 leading-tight">别废话，狠狠地推我一把</p>
+                    </div>
+                </button>
             </div>
         </section>
 
-        <section id="chat-section" class="glass-panel chat-container flex flex-col h-[380px] overflow-hidden bg-white/50 relative">
-            <div id="chat" class="flex-1 overflow-y-auto p-8 space-y-4 text-sm flex flex-col"></div>
-            <div class="p-4 border-t flex items-center space-x-2">
-                <textarea id="input" rows="1" class="flex-1 p-3 border rounded-xl resize-none focus:outline-none" placeholder="聊聊吧..."></textarea>
-                <button id="send" disabled class="p-3 bg-slate-700 text-white rounded-xl">发送</button>
+        <section id="mood-section" class="glass-panel p-8">
+            <div class="text-center mb-6">
+                <p class="text-[11px] font-bold text-slate-500 tracking-widest uppercase mb-1">Status Self-Check</p>
+                <p class="text-[13px] text-slate-400 italic">此时此刻，感受一下你的状态是什么样的</p>
+            </div>
+            <div class="px-4">
+                <div class="flex justify-between text-[10px] font-black tracking-tighter mb-4 px-1">
+                    <span class="text-slate-400">麻木 / 虚无</span>
+                    <span class="text-rose-500">焦虑 / 烦躁</span>
+                </div>
+                <input type="range" id="mood" min="0" max="100" value="50" class="mood-slider">
+                <div class="flex justify-between mt-3 px-2">
+                    <div class="tick-mark"></div><div class="tick-mark"></div><div class="tick-mark"></div>
+                    <div class="tick-mark"></div><div class="tick-mark"></div><div class="tick-mark"></div>
+                    <div class="tick-mark"></div><div class="tick-mark"></div><div class="tick-mark"></div>
+                    <div class="tick-mark"></div><div class="tick-mark"></div>
+                </div>
             </div>
         </section>
 
-        <button id="btn-start-reboot" class="w-full py-6 rounded-3xl bg-slate-700 text-white font-bold shadow-xl">生成重启指令</button>
-
-        <section id="section-stage-1" class="hidden glass-panel p-8 text-center space-y-4">
-            <div id="display-break-instruction" class="text-xl font-medium"></div>
-            <button id="btn-confirm-break" class="w-full py-4 bg-slate-800 text-white rounded-2xl">我已完成</button>
+        <section id="chat-section" class="glass-panel chat-container flex flex-col h-[380px] overflow-hidden bg-slate-100/40 relative">
+            <button onclick="clearCurrentChat()" title="清空对话" class="btn-reset-chat absolute top-4 right-4 z-20 p-2 text-slate-300 hover:text-slate-500">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+            <div id="chat" class="flex-1 overflow-y-auto p-8 space-y-6 text-sm custom-scrollbar flex flex-col">
+                <div class="bg-slate-50 p-6 rounded-[2rem] rounded-tl-none self-start max-w-[85%] text-slate-600 leading-relaxed border border-slate-200 shadow-sm">
+                    选择上方任一角色，在这里聊聊吧。
+                </div>
+            </div>
+            <div class="p-6 bg-white/50 border-t border-slate-200 flex items-center space-x-3">
+                <textarea id="input" rows="1" class="flex-1 bg-white border border-slate-100 rounded-xl py-4 px-5 text-sm focus:outline-none placeholder-slate-300 resize-none shadow-sm" placeholder="描述你的感受或想逃避的事..."></textarea>
+                <button id="send" disabled class="bg-white text-slate-300 p-4 rounded-xl shadow-sm transition-all"><i data-lucide="send" class="w-5 h-5"></i></button>
+            </div>
         </section>
+
+        <button id="btn-start-reboot" class="w-full py-7 rounded-[2.5rem] bg-slate-700 text-white font-bold tracking-[0.4em] hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 text-sm disabled:opacity-50 disabled:cursor-wait">
+            生成重启指令
+        </button>
+
+        <section id="section-stage-1" class="hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div class="bridge-card p-12 rounded-[3.5rem] border-2 border-slate-700/5 text-center space-y-8">
+                <div class="text-[10px] font-black text-slate-400 tracking-[0.3em] uppercase">断裂物理连接</div>
+                <div id="display-break-instruction" class="text-xl md:text-2xl text-slate-800 font-medium leading-relaxed px-4 flex flex-col items-center justify-center min-h-[100px]"></div>
+                <button id="btn-confirm-break" class="w-full py-6 rounded-[2rem] bg-slate-800 text-white font-bold tracking-[0.3em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg text-sm">我已完成</button>
+            </div>
+        </section>
+
+        <section id="section-stage-2" class="hidden animate-in fade-in zoom-in-95 duration-700 space-y-8">
+            <div class="bridge-card p-12 rounded-[3.5rem] space-y-10">
+                <div class="space-y-8">
+                    <div class="step-box">
+                       <div id="display-combined-instruction" class="text-slate-700 text-lg leading-relaxed font-medium min-h-[40px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="stage-2-actions" class="space-y-4">
+                <button id="btn-open-record" class="w-full py-7 rounded-[2.5rem] bg-slate-700 text-white font-black tracking-[0.5em] hover:bg-slate-800 transition-all shadow-xl text-xs">
+                    重启完毕 · 封存记录
+                </button>
+                <div id="skip-completion-box" class="hidden text-center space-y-4">
+                    <button onclick="finishThisRound()" class="w-full py-7 rounded-[2.5rem] bg-slate-200 text-slate-600 font-black tracking-[0.5em] hover:bg-slate-300 transition-all text-xs">
+                        完成本次重启
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-results" class="hidden w-full space-y-2 pt-12 border-t border-slate-200">
+            <div class="text-center">
+                <h3 class="text-[10px] font-black text-slate-400 tracking-[0.4em] uppercase mb-4">时光存根 · Reboot Archives</h3>
+            </div>
+            <div id="sticky-note-container" class="custom-scrollbar"></div>
+            <p id="limit-hint" class="hidden text-center text-[10px] text-amber-500 font-bold tracking-widest animate-pulse mt-4">记忆已满载，请专注当下。</p>
+        </section>
+
     </main>
 
+    <div id="modal" class="fixed inset-0 bg-slate-900/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-6">
+        <div class="bg-white p-12 rounded-[4rem] w-full max-w-lg shadow-3xl space-y-10">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold text-slate-800">重启后的碎碎念</h3>
+                <p class="text-xs text-slate-400 mt-4 tracking-widest font-medium italic">写下一个此刻跃入脑海的词</p>
+            </div>
+            <textarea id="note" class="w-full h-44 p-8 bg-slate-50 rounded-[2.5rem] focus:outline-none text-sm border-none placeholder-slate-300 resize-none" placeholder="记录此刻的清措..."></textarea>
+            <div class="flex space-x-5">
+                <button onclick="handleSkipRecord()" class="flex-1 py-6 text-xs text-slate-300 font-bold tracking-widest">跳过</button>
+                <button onclick="handleSaveRecord()" class="flex-[2] py-6 bg-slate-700 text-white rounded-[2rem] text-xs font-bold tracking-[0.4em] shadow-xl">封存瞬间</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 【关键】请在这里填入你新申请的 API Key
+        // 修复：请将下方的 "REPLACE_WITH_YOUR_NEW_KEY" 替换为你新生成的 API Key
         const apiKey = "AIzaSyA6k2Ozjd8xckqALkJ-OeVXJAbda2oGgQ8"; 
+        lucide.createIcons();
 
         const personas = {
-            weiguang: { name: "微光", theme: "#fbbf24", bg: "#fffcf0", systemPrompt: "你叫微光。语气温柔舒缓。", welcome: "我是微光。哪里让你觉得不舒服？" },
-            kongshan: { name: "空山", theme: "#34d399", bg: "#f0fdf4", systemPrompt: "你叫空山。极简冷静。", welcome: "我是空山。说说大脑里的噪音。" },
-            lingjing: { name: "棱镜", theme: "#38bdf8", bg: "#f0f9ff", systemPrompt: "你叫棱镜。理性分析。", welcome: "我是棱镜。我们来拆解你的情绪。" },
-            huohua: { name: "火花", theme: "#f87171", bg: "#fef2f2", systemPrompt: "你叫火花。充满动力。", welcome: "我是火花。告诉我你最不敢面对的事。" }
+            weiguang: { 
+                name: "微光", icon: "☁️", theme: "#fbbf24", bg: "linear-gradient(135deg, #fffcf0 0%, #fff7ed 100%)", 
+                systemPrompt: "你叫微光。你是运用‘接纳与承诺疗法(ACT)’的心理陪伴者。对话特征：柔和、温润、不过长，表达清晰。",
+                welcome: "我是微光。我能感觉到你的疲惫，我们不需要立刻振作，哪怕只是坐一会儿也好。哪里让你觉得不舒服？", 
+                placeholder: "此时是不是有点疲惫了？" 
+            },
+            kongshan: { 
+                name: "空山", icon: "🍃", theme: "#34d399", bg: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)", 
+                systemPrompt: "你叫空山。你是‘具身认知’与‘正念’导师。对话特征：极简、清冷、零情感负担。不要过长，表达清晰。",
+                welcome: "我是空山。世界在流动，而你陷在思维的死角里。告诉我，你大脑里最吵的声音在重复什么？", 
+                placeholder: "写下那个杂念，把它从脑中剥离..." 
+            },
+            lingjing: { 
+                name: "棱镜", icon: "💠", theme: "#38bdf8", bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)", 
+                systemPrompt: "你叫棱镜。你是基于‘脑科学’与‘CBT’的认知教练。对话特征：客观、精准、充满洞察力。不要过长，表达清晰。",
+                welcome: "我是棱镜。多巴胺正在干扰你的前额叶皮层。具体的逻辑困扰是什么？我们来拆解它。", 
+                placeholder: "让我们停下来认真的思考下当下吧。" 
+            },
+            huohua: { 
+                name: "火花", icon: "🔥", theme: "#f87171", bg: "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)", 
+                systemPrompt: "你叫火花。你是运用‘行为激活(BA)’与‘五秒法则’的行动教练。对话特征：短促、有力、高节奏感。不要过长，表达清晰。",
+                welcome: "我是火花。别在那儿思考人生了，那只是逃避的陷阱。直接说，你现在最不敢面对的那项任务是什么？", 
+                placeholder: "说出那个任务，名字就行。" 
+            }
         };
 
-        let currentP = null, chatHistory = [];
+        let currentP = null;
+        let chatHistory = [];
+        let noteCount = 0;
+        let currentInstruction = ""; 
+        const MAX_NOTES = 10;
+
+        function sanitizeText(text) {
+            return text.replace(/\*\*/g, '').replace(/__/g, '').trim();
+        }
+
+        async function fetchWeatherAndLocation() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                if(data.city) {
+                    document.getElementById('location').innerText = data.city;
+                    const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&current_weather=true`);
+                    const weatherData = await weatherRes.json();
+                    const temp = Math.round(weatherData.current_weather.temperature);
+                    document.getElementById('weatherInfo').innerText = `${temp}°C / 实时接入`;
+                }
+            } catch (e) {
+                document.getElementById('location').innerText = "本地接入";
+            }
+        }
+
+        function clearStageDisplays() {
+            document.getElementById('section-stage-1').classList.add('hidden');
+            document.getElementById('section-stage-2').classList.add('hidden');
+            document.getElementById('btn-start-reboot').classList.remove('hidden');
+        }
 
         function selectPersona(id) {
             currentP = personas[id];
+            clearStageDisplays();
             document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`p-${id}`).classList.add('active');
-            document.body.style.backgroundColor = currentP.bg;
+            document.body.style.background = currentP.bg;
+            document.documentElement.style.setProperty('--theme-color', currentP.theme);
             document.getElementById('send').disabled = false;
-            document.getElementById('chat').innerHTML = "";
+            document.getElementById('send').classList.replace('text-slate-300', 'text-slate-700');
+            document.getElementById('input').placeholder = currentP.placeholder;
+            clearCurrentChat();
+        }
+
+        window.clearCurrentChat = function() {
+            if(!currentP) return;
+            const chatBox = document.getElementById('chat');
+            chatBox.innerHTML = "";
             addMsg(currentP.welcome);
             chatHistory = [{ role: "assistant", content: currentP.welcome }];
-        }
-
-        function addMsg(text, isUser = false) {
-            const div = document.createElement('div');
-            div.className = isUser ? "bg-slate-700 text-white p-4 rounded-2xl self-end max-w-[80%]" : "bg-white p-4 rounded-2xl self-start max-w-[80%] border shadow-sm";
-            div.innerText = text;
-            document.getElementById('chat').appendChild(div);
-            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-        }
-
-        async function callGemini(sys, user) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            const payload = { contents: [{parts: [{text: user}]}], systemInstruction: {parts: [{text: sys}]} };
-            try {
-                const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                const data = await res.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch(e) { return "连接失败，请检查 API Key 是否正确。"; }
-        }
-
-        document.getElementById('send').onclick = async () => {
-            const input = document.getElementById('input'), val = input.value.trim();
-            if(!val || !currentP) return;
-            addMsg(val, true); chatHistory.push({ role: "user", content: val });
-            input.value = "";
-            const res = await callGemini(currentP.systemPrompt, val);
-            addMsg(res);
         };
 
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        window.finishThisRound = function() {
+            clearStageDisplays();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function addMsg(text, isUser = false) {
+            const chatBox = document.getElementById('chat');
+            const div = document.createElement('div');
+            div.className = isUser ? "bg-slate-700 text-white p-6 rounded-[2rem] rounded-tr-none self-end max-w-[85%] ml-auto shadow-lg mb-4" : "bg-slate-50 p-6 rounded-[2rem] rounded-tl-none self-start max-w-[85%] text-slate-600 border border-slate-200 shadow-sm mb-4";
+            div.innerText = sanitizeText(text);
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
-        setInterval(updateTime, 1000); updateTime();
-        lucide.createIcons();
-    </script>
-</body>
-</html>
+
+        let currentLoadingEl = null;
+        function showLoading() {
+            const chatBox = document.getElementById('chat');
+            const loader = document.createElement('div');
+            loader.className = "typing-indicator self-start mb-4";
+            loader.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatBox.appendChild(loader);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            current
