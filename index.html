@@ -322,9 +322,6 @@
 
     <script>
         let apiKey = "";
-        lucide.createIcons();
-
-        // 安全保存API密钥（只存在用户电脑）
         function saveApiKey() {
             const input = document.getElementById('apiKeyInput');
             const key = input.value.trim();
@@ -352,9 +349,7 @@
             // 自动选择第一个角色
             selectPersona('weiguang');
         }
-
-        // 演示模式（不需要API密钥）
-        function useDemoMode() {
+         function useDemoMode() {
             apiKey = "demo_mode";
             document.getElementById('apiKeySection').classList.add('hidden');
             alert("🎭 进入演示模式\n\n使用模拟回复测试界面功能");
@@ -383,9 +378,7 @@
                 return replies[Math.floor(Math.random() * replies.length)];
             };
         }
-
-        // 页面加载时检查是否有保存的密钥
-        function checkSavedKey() {
+            function checkSavedKey() {
             const savedKey = localStorage.getItem('deepseek_api_key');
             if (savedKey && savedKey.startsWith('sk-')) {
                 if (confirm("检测到保存的API密钥，是否使用？")) {
@@ -394,6 +387,16 @@
                 }
             }
         }
+        lucide.createIcons();
+
+        // 安全保存API密钥（只存在用户电脑）
+        
+
+        // 演示模式（不需要API密钥）
+       
+
+        // 页面加载时检查是否有保存的密钥
+    
 
         const personas = {
             weiguang: { 
@@ -629,3 +632,4 @@
             noteCount++;
             document.getElementById('section-results').classList.remove('hidden');
             const container = document.getElementById('
+
