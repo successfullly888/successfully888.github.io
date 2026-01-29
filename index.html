@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瞬息重启 | Bridge to Reality</title>
-    <link rel="icon" href="https://fav.farm/🍃" /> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -65,10 +64,8 @@
         .mood-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
         .tick-mark { width: 1px; height: 4px; background: rgba(0,0,0,0.1); }
 
-        .chat-container { border: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); }
-        .bridge-card { background: white;
-        border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08); }
+        .chat-container { border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); }
+        .bridge-card { background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08); }
         
         .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
@@ -89,9 +86,9 @@
             display: flex;
             flex-direction: column;
         }
-        .sticky-note:hover { transform: translateY(-5px);
-        box-shadow: 10px 10px 20px rgba(0,0,0,0.08); }
+        .sticky-note:hover { transform: translateY(-5px); box-shadow: 10px 10px 20px rgba(0,0,0,0.08); }
 
+        /* 对话加载动效样式 */
         .typing-indicator {
             display: flex;
             gap: 4px;
@@ -146,6 +143,8 @@
     </header>
 
     <main class="w-full max-w-2xl space-y-6 z-10">
+        
+        <!-- Persona Selection -->
         <section class="glass-panel p-8">
             <h2 class="text-xs font-bold text-slate-400 mb-8 text-center tracking-widest italic">“此刻，你希望我如何陪你重启？”</h2>
             <div class="grid grid-cols-2 gap-4">
@@ -180,6 +179,7 @@
             </div>
         </section>
 
+        <!-- Mood Slider -->
         <section id="mood-section" class="glass-panel p-8">
             <div class="text-center mb-6">
                 <p class="text-[11px] font-bold text-slate-500 tracking-widest uppercase mb-1">Status Self-Check</p>
@@ -200,6 +200,7 @@
             </div>
         </section>
 
+        <!-- Chat Area -->
         <section id="chat-section" class="glass-panel chat-container flex flex-col h-[380px] overflow-hidden bg-slate-100/40 relative">
             <button onclick="clearCurrentChat()" title="清空对话" class="btn-reset-chat absolute top-4 right-4 z-20 p-2 text-slate-300 hover:text-slate-500">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
@@ -215,10 +216,12 @@
             </div>
         </section>
 
+        <!-- Action Button -->
         <button id="btn-start-reboot" class="w-full py-7 rounded-[2.5rem] bg-slate-700 text-white font-bold tracking-[0.4em] hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 text-sm disabled:opacity-50 disabled:cursor-wait">
             生成重启指令
         </button>
 
+        <!-- Stage 1 Display -->
         <section id="section-stage-1" class="hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div class="bridge-card p-12 rounded-[3.5rem] border-2 border-slate-700/5 text-center space-y-8">
                 <div class="text-[10px] font-black text-slate-400 tracking-[0.3em] uppercase">断裂物理连接</div>
@@ -227,11 +230,12 @@
             </div>
         </section>
 
+        <!-- Stage 2 Display -->
         <section id="section-stage-2" class="hidden animate-in fade-in zoom-in-95 duration-700 space-y-8">
             <div class="bridge-card p-12 rounded-[3.5rem] space-y-10">
                 <div class="space-y-8">
                     <div class="step-box">
-                       <div id="display-combined-instruction" class="text-slate-700 text-lg leading-relaxed font-medium min-h-[40px]"></div>
+                        <div id="display-combined-instruction" class="text-slate-700 text-lg leading-relaxed font-medium min-h-[40px]"></div>
                     </div>
                 </div>
             </div>
@@ -248,6 +252,7 @@
             </div>
         </section>
 
+        <!-- Persistent Results Display -->
         <section id="section-results" class="hidden w-full space-y-2 pt-12 border-t border-slate-200">
             <div class="text-center">
                 <h3 class="text-[10px] font-black text-slate-400 tracking-[0.4em] uppercase mb-4">时光存根 · Reboot Archives</h3>
@@ -258,6 +263,7 @@
 
     </main>
 
+    <!-- Modal for Record -->
     <div id="modal" class="fixed inset-0 bg-slate-900/10 backdrop-blur-md hidden z-50 flex items-center justify-center p-6">
         <div class="bg-white p-12 rounded-[4rem] w-full max-w-lg shadow-3xl space-y-10">
             <div class="text-center">
@@ -273,8 +279,8 @@
     </div>
 
     <script>
-        // 修复：请将下方的 "REPLACE_WITH_YOUR_NEW_KEY" 替换为你新生成的 API Key
-        const apiKey = "AIzaSyA6k2Ozjd8xckqALkJ-OeVXJAbda2oGgQ8"; 
+        // CRITICAL: apiKey MUST be an empty string for the environment to inject it correctly.
+        const apiKey = "sk-4b7b458bb748475ea16d2f85f452886f"; 
         lucide.createIcons();
 
         const personas = {
@@ -371,6 +377,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // --- 加载动效逻辑 ---
         let currentLoadingEl = null;
         function showLoading() {
             const chatBox = document.getElementById('chat');
@@ -383,4 +390,139 @@
             `;
             chatBox.appendChild(loader);
             chatBox.scrollTop = chatBox.scrollHeight;
-            current
+            currentLoadingEl = loader;
+        }
+
+        function hideLoading() {
+            if (currentLoadingEl) {
+                currentLoadingEl.remove();
+                currentLoadingEl = null;
+            }
+        }
+
+       async function callGemini(systemPrompt, userPrompt, isJson = false) {
+    // 1. 修改为 DeepSeek 的 API 地址
+    const url = `https://api.deepseek.com/chat/completions`;
+    
+    // 2. 构造符合 OpenAI/DeepSeek 标准的请求体
+    const payload = {
+        model: "deepseek-chat", // 或者使用 deepseek-reasoner (R1)
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+        ],
+        // 如果是生成指令阶段，建议强制要求 JSON 格式
+        response_format: isJson ? { type: "json_object" } : { type: "text" },
+        temperature: 0.7
+    };
+    
+    // 指数退避重试逻辑（保持原有的健壮性）
+    for (let i = 0; i < 5; i++) {
+        try {
+            const res = await fetch(url, { 
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}` // DeepSeek 需要通过 Header 鉴权
+                }, 
+                body: JSON.stringify(payload) 
+            });
+            
+            if (!res.ok) throw new Error('API Error');
+            const data = await res.json();
+            
+            // 3. 修改解析逻辑，DeepSeek 的返回结构在 choices[0].message.content
+            return data.choices[0].message.content || null;
+        } catch(e) {
+            if (i === 4) return null;
+            await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+        }
+    }
+}
+
+        document.getElementById('btn-start-reboot').onclick = async () => {
+            if(!currentP) return;
+            const btn = document.getElementById('btn-start-reboot');
+            btn.disabled = true;
+            btn.innerText = "正在切断重启...";
+
+            const score = document.getElementById('mood').value;
+            const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
+            const prompt = `用户评分：${score}/100；倾诉：${userInput}。请输出JSON: {"feedback": "1句回应", "instruction": "1个具体的物理动作动作指令"}`;
+
+            const res = await callGemini(currentP.systemPrompt, prompt, true);
+            if(res) {
+                const data = JSON.parse(res);
+                currentInstruction = sanitizeText(data.instruction);
+                document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
+                btn.classList.add('hidden');
+                document.getElementById('section-stage-1').classList.remove('hidden');
+            }
+            btn.disabled = false;
+            btn.innerText = "生成重启指令";
+        };
+
+        document.getElementById('btn-confirm-break').onclick = async () => {
+            document.getElementById('display-combined-instruction').innerText = "你已成功重启。现在请放下杂念，投入深度专注。";
+            document.getElementById('section-stage-1').classList.add('hidden');
+            document.getElementById('section-stage-2').classList.remove('hidden');
+        };
+
+        const modal = document.getElementById('modal');
+        document.getElementById('btn-open-record').onclick = () => {
+            if(noteCount < MAX_NOTES) modal.classList.remove('hidden');
+        };
+        
+        window.handleSkipRecord = () => { modal.classList.add('hidden'); finishThisRound(); };
+
+        window.handleSaveRecord = () => {
+            const noteText = document.getElementById('note').value.trim();
+            if(!noteText) return;
+            modal.classList.add('hidden');
+            noteCount++;
+            document.getElementById('section-results').classList.remove('hidden');
+            const container = document.getElementById('sticky-note-container');
+            const noteDiv = document.createElement('div');
+            noteDiv.className = "sticky-note";
+            noteDiv.style.setProperty('--note-color', currentP.theme);
+            noteDiv.innerHTML = `
+                <div class="mb-2 text-[9px] text-slate-400 font-black uppercase tracking-widest">物理重启: ${currentInstruction}</div>
+                <div class="text-slate-700 font-serif text-sm">“${sanitizeText(noteText)}”</div>
+                <div class="mt-4 text-[9px] text-slate-300 font-bold">${new Date().toLocaleTimeString()}</div>
+            `;
+            container.appendChild(noteDiv);
+            if(noteCount >= MAX_NOTES) document.getElementById('limit-hint').classList.remove('hidden');
+            document.getElementById('note').value = "";
+            finishThisRound();
+        };
+
+        document.getElementById('send').onclick = async () => {
+            const input = document.getElementById('input');
+            const val = input.value.trim();
+            if(!val) return;
+            addMsg(val, true);
+            chatHistory.push({ role: "user", content: val });
+            input.value = "";
+
+            showLoading(); // 开始对话加载
+
+            const res = await callGemini(currentP.systemPrompt, val);
+            
+            hideLoading(); // 结束对话加载
+
+            if(res) { 
+                addMsg(res); 
+                chatHistory.push({ role: "assistant", content: res }); 
+            }
+        };
+
+        function updateEnv() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('date').innerText = now.getFullYear() + "." + (now.getMonth()+1).toString().padStart(2, '0') + "." + now.getDate().toString().padStart(2, '0');
+        }
+
+        window.onload = () => { updateEnv(); setInterval(updateEnv, 1000); fetchWeatherAndLocation(); };
+    </script>
+</body>
+</html>
