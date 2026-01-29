@@ -88,11 +88,33 @@
         }
         .sticky-note:hover { transform: translateY(-5px); box-shadow: 10px 10px 20px rgba(0,0,0,0.08); }
 
-        .loading-dots { display: flex; gap: 4px; padding: 12px 20px; background: rgba(0,0,0,0.03); border-radius: 1rem; width: fit-content; }
-        .dot { width: 6px; height: 6px; background: #94a3b8; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+        /* 对话加载动效样式 */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 1.5rem;
+            width: fit-content;
+            border-top-left-radius: 0;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        .typing-dot {
+            width: 5px;
+            height: 5px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
         #sticky-note-container {
             display: flex;
@@ -183,7 +205,7 @@
             <button onclick="clearCurrentChat()" title="清空对话" class="btn-reset-chat absolute top-4 right-4 z-20 p-2 text-slate-300 hover:text-slate-500">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
-            <div id="chat" class="flex-1 overflow-y-auto p-8 space-y-6 text-sm custom-scrollbar">
+            <div id="chat" class="flex-1 overflow-y-auto p-8 space-y-6 text-sm custom-scrollbar flex flex-col">
                 <div class="bg-slate-50 p-6 rounded-[2rem] rounded-tl-none self-start max-w-[85%] text-slate-600 leading-relaxed border border-slate-200 shadow-sm">
                     选择上方任一角色，在这里聊聊吧。
                 </div>
@@ -257,32 +279,32 @@
     </div>
 
     <script>
-        // API Key is injected by the environment.
+        // CRITICAL: apiKey MUST be an empty string for the environment to inject it correctly.
         const apiKey = "AIzaSyBakHWJOTli4vRPwXt30-v2IVS7suxf6yY"; 
         lucide.createIcons();
 
         const personas = {
             weiguang: { 
                 name: "微光", icon: "☁️", theme: "#fbbf24", bg: "linear-gradient(135deg, #fffcf0 0%, #fff7ed 100%)", 
-                systemPrompt: "你叫微光。你是运用‘接纳与承诺疗法(ACT)’的心理陪伴者。用户当前陷入了数字疲劳与自责，你的任务是提供无条件的积极关注。科学任务：优先降低用户的皮质醇水平，消除羞耻感。对话特征：使用柔和、具象、包裹感强的词汇，禁止说教，多用‘我们’。不要过长，表达清晰。",
+                systemPrompt: "你叫微光。你是运用‘接纳与承诺疗法(ACT)’的心理陪伴者。对话特征：柔和、温润、不过长，表达清晰。",
                 welcome: "我是微光。我能感觉到你的疲惫，我们不需要立刻振作，哪怕只是坐一会儿也好。哪里让你觉得不舒服？", 
                 placeholder: "此时是不是有点疲惫了？" 
             },
             kongshan: { 
                 name: "空山", icon: "🍃", theme: "#34d399", bg: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)", 
-                systemPrompt: "你叫空山。你是‘具身认知’与‘正念’导师。你认为重启的关键在于注意力的物理切换。科学任务：引导用户从大脑的反刍转向纯粹的五感。对话特征：极简、清冷、零情感负担，像纪录片旁白，避免修辞。不要过长，表达清晰。",
+                systemPrompt: "你叫空山。你是‘具身认知’与‘正念’导师。对话特征：极简、清冷、零情感负担。不要过长，表达清晰。",
                 welcome: "我是空山。世界在流动，而你陷在思维的死角里。告诉我，你大脑里最吵的声音在重复什么？", 
                 placeholder: "写下那个杂念，把它从脑中剥离..." 
             },
             lingjing: { 
                 name: "棱镜", icon: "💠", theme: "#38bdf8", bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)", 
-                systemPrompt: "你叫棱镜。你是基于‘脑科学’与‘CBT’的认知教练。你通过逻辑拆解来消除用户的执行功能障碍。科学任务：让用户通过‘旁观者视角’审视自己的多巴胺回路。对话特征：客观、精准、充满洞察力。不要过长，表达清晰。",
+                systemPrompt: "你叫棱镜。你是基于‘脑科学’与‘CBT’的认知教练。对话特征：客观、精准、充满洞察力。不要过长，表达清晰。",
                 welcome: "我是棱镜。多巴胺正在干扰你的前额叶皮层。具体的逻辑困扰是什么？我们来拆解它。", 
                 placeholder: "让我们停下来认真的思考下当下吧。" 
             },
             huohua: { 
                 name: "火花", icon: "🔥", theme: "#f87171", bg: "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)", 
-                systemPrompt: "你叫火花。你是运用‘行为激活(BA)’与‘五秒法则’的行动教练。你认为行动先于情绪。科学任务：强行驱动运动神经，利用‘微小胜利’重塑效能感。对话特征：短促、有力、高节奏感。不要过长，表达清晰。",
+                systemPrompt: "你叫火花。你是运用‘行为激活(BA)’与‘五秒法则’的行动教练。对话特征：短促、有力、高节奏感。不要过长，表达清晰。",
                 welcome: "我是火花。别在那儿思考人生了，那只是逃避的陷阱。直接说，你现在最不敢面对的那项任务是什么？", 
                 placeholder: "说出那个任务，名字就行。" 
             }
@@ -298,59 +320,19 @@
             return text.replace(/\*\*/g, '').replace(/__/g, '').trim();
         }
 
-        // Improved Location Fetching with fallback to HTTPS compliant services
         async function fetchWeatherAndLocation() {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
-
             try {
-                // Primary: ipapi.co (HTTPS)
-                const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-                if (!res.ok) throw new Error('Primary API failed');
+                const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
-                
                 if(data.city) {
                     document.getElementById('location').innerText = data.city;
-                    updateWeather(data.latitude, data.longitude);
-                    return;
-                }
-                throw new Error('Incomplete data');
-            } catch (e) {
-                console.warn("Location Service Retry...", e.message);
-                try {
-                    // Secondary: Cloudflare Trace (extremely reliable)
-                    const cfRes = await fetch('https://www.cloudflare.com/cdn-cgi/trace', { signal: controller.signal });
-                    const text = await cfRes.text();
-                    const ip = text.match(/ip=(.*)\n/)?.[1];
-                    if (ip) {
-                        document.getElementById('location').innerText = "云端接入";
-                        // Generic coords for weather if IP city lookup fails
-                        updateWeather(31.23, 121.47); 
-                    } else {
-                        throw new Error('CF Trace failed');
-                    }
-                } catch (e2) {
-                    console.error("All Location Services Failed");
-                    document.getElementById('location').innerText = "本地接入";
-                    document.getElementById('weatherInfo').innerText = "感应中...";
-                }
-            } finally {
-                clearTimeout(timeoutId);
-            }
-        }
-
-        async function updateWeather(lat, lon) {
-            try {
-                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-                if (!weatherRes.ok) throw new Error('Weather service error');
-                const weatherData = await weatherRes.json();
-                if(weatherData.current_weather) {
+                    const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&current_weather=true`);
+                    const weatherData = await weatherRes.json();
                     const temp = Math.round(weatherData.current_weather.temperature);
                     document.getElementById('weatherInfo').innerText = `${temp}°C / 实时接入`;
                 }
-            } catch(e) {
-                console.error("Weather Error:", e);
-                document.getElementById('weatherInfo').innerText = "晴雨未知";
+            } catch (e) {
+                document.getElementById('location').innerText = "本地接入";
             }
         }
 
@@ -358,13 +340,11 @@
             document.getElementById('section-stage-1').classList.add('hidden');
             document.getElementById('section-stage-2').classList.add('hidden');
             document.getElementById('btn-start-reboot').classList.remove('hidden');
-            document.getElementById('skip-completion-box').classList.add('hidden');
-            document.getElementById('btn-open-record').classList.remove('hidden');
         }
 
         function selectPersona(id) {
             currentP = personas[id];
-            clearStageDisplays(); 
+            clearStageDisplays();
             document.querySelectorAll('.persona-card').forEach(c => c.classList.remove('active'));
             document.getElementById(`p-${id}`).classList.add('active');
             document.body.style.background = currentP.bg;
@@ -391,25 +371,33 @@
         function addMsg(text, isUser = false) {
             const chatBox = document.getElementById('chat');
             const div = document.createElement('div');
-            div.className = isUser ? "bg-slate-700 text-white p-6 rounded-[2rem] rounded-tr-none self-end max-w-[85%] ml-auto shadow-lg animate-in slide-in-from-right-4 duration-300" : "bg-slate-50 p-6 rounded-[2rem] rounded-tl-none self-start max-w-[85%] text-slate-600 border border-slate-200 shadow-sm animate-in slide-in-from-left-4 duration-300";
+            div.className = isUser ? "bg-slate-700 text-white p-6 rounded-[2rem] rounded-tr-none self-end max-w-[85%] ml-auto shadow-lg mb-4" : "bg-slate-50 p-6 rounded-[2rem] rounded-tl-none self-start max-w-[85%] text-slate-600 border border-slate-200 shadow-sm mb-4";
             div.innerText = sanitizeText(text);
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // --- 加载动效逻辑 ---
+        let currentLoadingEl = null;
         function showLoading() {
             const chatBox = document.getElementById('chat');
-            const div = document.createElement('div');
-            div.id = "msg-loading";
-            div.className = "self-start animate-in fade-in duration-300";
-            div.innerHTML = `<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
-            chatBox.appendChild(div);
+            const loader = document.createElement('div');
+            loader.className = "typing-indicator self-start mb-4";
+            loader.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatBox.appendChild(loader);
             chatBox.scrollTop = chatBox.scrollHeight;
+            currentLoadingEl = loader;
         }
 
-        function removeLoading() {
-            const el = document.getElementById('msg-loading');
-            if(el) el.remove();
+        function hideLoading() {
+            if (currentLoadingEl) {
+                currentLoadingEl.remove();
+                currentLoadingEl = null;
+            }
         }
 
         async function callGemini(systemPrompt, userPrompt, isJson = false) {
@@ -417,123 +405,73 @@
             const payload = {
                 contents: [{parts: [{text: userPrompt}]}],
                 systemInstruction: {parts: [{text: systemPrompt}]},
-                generationConfig: isJson ? { responseMimeType: "application/json", temperature: 0.1 } : { temperature: 0.85 }
+                generationConfig: isJson ? {responseMimeType: "application/json"} : { temperature: 0.8 }
             };
             
-            const maxRetries = 5;
-            for (let i = 0; i < maxRetries; i++) {
+            for (let i = 0; i < 5; i++) {
                 try {
                     const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
                     if (!res.ok) throw new Error('API Error');
                     const data = await res.json();
                     return data.candidates?.[0]?.content?.parts?.[0]?.text || null;
                 } catch(e) {
-                    if (i === maxRetries - 1) return null;
+                    if (i === 4) return null;
                     await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
                 }
             }
         }
 
-       document.getElementById('btn-start-reboot').onclick = async () => {
-    if(!currentP) return;
-    const btn = document.getElementById('btn-start-reboot');
-    const score = document.getElementById('mood').value;
-    const wt = `${document.getElementById('time').innerText} ${document.getElementById('weatherInfo').innerText}`;
-    const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
+        document.getElementById('btn-start-reboot').onclick = async () => {
+            if(!currentP) return;
+            const btn = document.getElementById('btn-start-reboot');
+            btn.disabled = true;
+            btn.innerText = "正在切断重启...";
 
-    btn.disabled = true;
-    btn.innerText = "正在切断重启...";
+            const score = document.getElementById('mood').value;
+            const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
+            const prompt = `用户评分：${score}/100；倾诉：${userInput}。请输出JSON: {"feedback": "1句回应", "instruction": "1个具体的物理动作动作指令"}`;
 
-    const prompt = `用户评分：${score}/100；天气时间：${wt}；用户倾诉：${userInput}；选择角色：${currentP.name}。
-[生成任务]
-1. 根据评分进行角色化回应。
-2. 生成断裂指令：一个纯物理动作，动词开头。
-[输出格式] 严格JSON: {"feedback": "1句回应", "instruction": "一行口令"}`;
+            const res = await callGemini(currentP.systemPrompt, prompt, true);
+            if(res) {
+                const data = JSON.parse(res);
+                currentInstruction = sanitizeText(data.instruction);
+                document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
+                btn.classList.add('hidden');
+                document.getElementById('section-stage-1').classList.remove('hidden');
+            }
+            btn.disabled = false;
+            btn.innerText = "生成重启指令";
+        };
 
-    const res = await callGemini(currentP.systemPrompt, prompt, true);
-    if(res) {
-        try {
-            const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
-            const data = JSON.parse(cleanJson);
-            currentInstruction = sanitizeText(data.instruction);
-            document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
-            btn.classList.add('hidden');
-            document.getElementById('section-stage-1').classList.remove('hidden');
-            document.getElementById('section-stage-1').scrollIntoView({ behavior: 'smooth' });
-        } catch(e) {
-            console.error("JSON解析失败", e);
-            alert("同步频率失败，请再试一次");
-        }
-    }
-    btn.disabled = false;
-    btn.innerText = "生成重启指令";
-};
-
-       document.getElementById('btn-confirm-break').onclick = async () => {
-    const btn = document.getElementById('btn-confirm-break');
-    btn.disabled = true;
-    btn.innerText = "重塑认知中...";
-
-    const prompt = `用户刚才完成了断裂指令：${currentInstruction}；选择角色：${currentP.name}。
-[输出格式] 严格JSON: {"bridge": "反馈+具体入轨行动指引"}`;
-
-    const res = await callGemini(currentP.systemPrompt, prompt, true);
-    if(res) {
-        try {
-            const cleanJson = res.replace(/```json/g, '').replace(/```/g, '').trim();
-            const data = JSON.parse(cleanJson);
-            document.getElementById('display-combined-instruction').innerText = sanitizeText(data.bridge);
+        document.getElementById('btn-confirm-break').onclick = async () => {
+            document.getElementById('display-combined-instruction').innerText = "你已成功重启。现在请放下杂念，投入深度专注。";
             document.getElementById('section-stage-1').classList.add('hidden');
             document.getElementById('section-stage-2').classList.remove('hidden');
-            document.getElementById('section-stage-2').scrollIntoView({ behavior: 'smooth' });
-        } catch(e) {
-            console.error("JSON解析失败", e);
-        }
-    }
-    btn.disabled = false;
-    btn.innerText = "我已完成";
-};
+        };
 
         const modal = document.getElementById('modal');
         document.getElementById('btn-open-record').onclick = () => {
-            if(noteCount >= MAX_NOTES) return;
-            modal.classList.remove('hidden');
+            if(noteCount < MAX_NOTES) modal.classList.remove('hidden');
         };
         
-        window.handleSkipRecord = function() {
-            modal.classList.add('hidden');
-            document.getElementById('btn-open-record').classList.add('hidden');
-            document.getElementById('skip-completion-box').classList.remove('hidden');
-        };
+        window.handleSkipRecord = () => { modal.classList.add('hidden'); finishThisRound(); };
 
-        window.handleSaveRecord = function() {
+        window.handleSaveRecord = () => {
             const noteText = document.getElementById('note').value.trim();
             if(!noteText) return;
             modal.classList.add('hidden');
             noteCount++;
-            
             document.getElementById('section-results').classList.remove('hidden');
             const container = document.getElementById('sticky-note-container');
             const noteDiv = document.createElement('div');
-            noteDiv.className = "sticky-note animate-in slide-in-from-left-4 duration-500";
+            noteDiv.className = "sticky-note";
             noteDiv.style.setProperty('--note-color', currentP.theme);
             noteDiv.innerHTML = `
-                <div class="mb-4">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">物理重启</p>
-                    <p class="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded">“${currentInstruction}”</p>
-                </div>
-                <div class="flex-1">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">瞬间念头</p>
-                    <p class="text-slate-700 font-serif text-sm">“${sanitizeText(noteText)}”</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-end">
-                    <span class="text-[9px] text-slate-300 font-bold">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                    <span class="text-[9px] text-slate-400 font-bold">@${currentP.name}</span>
-                </div>
+                <div class="mb-2 text-[9px] text-slate-400 font-black uppercase tracking-widest">物理重启: ${currentInstruction}</div>
+                <div class="text-slate-700 font-serif text-sm">“${sanitizeText(noteText)}”</div>
+                <div class="mt-4 text-[9px] text-slate-300 font-bold">${new Date().toLocaleTimeString()}</div>
             `;
             container.appendChild(noteDiv);
-            container.scrollLeft = container.scrollWidth;
-
             if(noteCount >= MAX_NOTES) document.getElementById('limit-hint').classList.remove('hidden');
             document.getElementById('note').value = "";
             finishThisRound();
@@ -546,9 +484,13 @@
             addMsg(val, true);
             chatHistory.push({ role: "user", content: val });
             input.value = "";
-            showLoading();
-            const res = await callGemini(currentP.systemPrompt, `用户倾诉：${val}`);
-            removeLoading();
+
+            showLoading(); // 开始对话加载
+
+            const res = await callGemini(currentP.systemPrompt, val);
+            
+            hideLoading(); // 结束对话加载
+
             if(res) { 
                 addMsg(res); 
                 chatHistory.push({ role: "assistant", content: res }); 
@@ -561,15 +503,7 @@
             document.getElementById('date').innerText = now.getFullYear() + "." + (now.getMonth()+1).toString().padStart(2, '0') + "." + now.getDate().toString().padStart(2, '0');
         }
 
-        window.onload = () => { 
-            updateEnv(); 
-            setInterval(updateEnv, 1000); 
-            fetchWeatherAndLocation(); 
-        };
+        window.onload = () => { updateEnv(); setInterval(updateEnv, 1000); fetchWeatherAndLocation(); };
     </script>
 </body>
-
 </html>
-
-
-
