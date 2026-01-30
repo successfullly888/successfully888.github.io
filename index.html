@@ -418,10 +418,15 @@
             document.getElementById('date').innerText = now.getFullYear() + "." + (now.getMonth()+1).toString().padStart(2, '0') + "." + now.getDate().toString().padStart(2, '0');
         }
 
-        window.onload = () => { updateEnv(); setInterval(updateEnv, 1000); fetchWeatherAndLocation(); };
+        window.onload = () => { 
+    updateEnv(); 
+    setInterval(updateEnv, 1000); 
+    // 删除了 fetchWeatherAndLocation()，防止因请求国外天气接口导致的页面长期卡顿
+};
     </script>
 </body>
 </html>
+
 
 
 
