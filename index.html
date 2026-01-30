@@ -5,20 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瞬息重启 | Bridge to Reality</title>
     <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/lucide/0.263.0/lucide.min.js"></script>
+
     <style>
+        /* 强制指定中文字体，不再依赖 Google Fonts */
         :root {
             --theme-primary: #334155;
             --theme-bg: #f8fafc;
         }
         body {
-            font-family: 'Inter', 'Noto Serif SC', serif;
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             min-height: 100vh;
             transition: background 1.5s ease;
             overflow-x: hidden;
         }
+        /* 以下是你原有的 CSS 样式，保持不变 */
         .glass-panel {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(20px);
@@ -43,7 +46,6 @@
             box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
             transform: translateY(-2px);
         }
-        
         .mood-slider {
             -webkit-appearance: none;
             width: 100%; height: 6px;
@@ -63,16 +65,12 @@
         }
         .mood-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
         .tick-mark { width: 1px; height: 4px; background: rgba(0,0,0,0.1); }
-
         .chat-container { border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05); }
         .bridge-card { background: white; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08); }
-        
         .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
-
         .btn-reset-chat { transition: transform 0.3s ease; }
         .btn-reset-chat:hover { transform: rotate(180deg); }
-
         .sticky-note {
             background: #fff;
             padding: 1.5rem;
@@ -87,8 +85,6 @@
             flex-direction: column;
         }
         .sticky-note:hover { transform: translateY(-5px); box-shadow: 10px 10px 20px rgba(0,0,0,0.08); }
-
-        /* 对话加载动效样式 */
         .typing-indicator {
             display: flex;
             gap: 4px;
@@ -109,24 +105,16 @@
         }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        
         @keyframes typingBounce {
             0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
             40% { transform: scale(1); opacity: 1; }
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        #sticky-note-container {
-            display: flex;
-            overflow-x: auto;
-            padding: 20px 0;
-            gap: 20px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
+        #sticky-note-container { display: flex; overflow-x: auto; padding: 20px 0; gap: 20px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .sticky-note { scroll-snap-align: start; }
     </style>
 </head>
+    
 <body class="p-4 md:p-8 flex flex-col items-center pb-24">
 
     <div id="aura" class="fixed inset-0 pointer-events-none opacity-30 transition-all duration-1000"></div>
@@ -529,4 +517,5 @@
     </script>
 </body>
 </html>
+
 
