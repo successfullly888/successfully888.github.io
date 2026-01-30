@@ -143,52 +143,10 @@
     </header>
 
     <main class="w-full max-w-2xl space-y-6 z-10">
-        <!-- API密钥安全输入区域 -->
-        <section id="apiKeySection" class="glass-panel p-6 mb-6">
-            <div class="text-center mb-4">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-3">
-                    <i data-lucide="key" class="w-6 h-6 text-slate-600"></i>
-                </div>
-                <h3 class="text-sm font-bold text-slate-800 mb-1">安全验证</h3>
-                <p class="text-xs text-slate-500">请输入你的DeepSeek API密钥以继续</p>
-            </div>
-            
-            <div class="space-y-3">
-                <input 
-                    type="password" 
-                    id="apiKeyInput" 
-                    placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-                    class="w-full p-4 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:border-slate-400 placeholder-slate-300"
-                    autocomplete="off"
-                >
-                
-                <div class="flex space-x-3">
-                    <button 
-                        onclick="useDemoMode()" 
-                        class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-200 transition"
-                    >
-                        试用演示版
-                    </button>
-                    <button 
-                        onclick="saveApiKey()" 
-                        class="flex-2 py-3 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-900 transition"
-                    >
-                        确认密钥
-                    </button>
-                </div>
-            </div>
-            
-            <div class="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                <p class="text-xs text-blue-700">
-                    <span class="font-bold">🔐 安全提示：</span>密钥仅保存在你的浏览器中，不会被上传到任何服务器。
-                    <a href="https://platform.deepseek.com/api_keys" target="_blank" class="underline ml-1">获取密钥</a>
-                </p>
-            </div>
-        </section>
         
         <!-- Persona Selection -->
         <section class="glass-panel p-8">
-            <h2 class="text-xs font-bold text-slate-400 mb-8 text-center tracking-widest italic">"此刻，你希望我如何陪你重启？"</h2>
+            <h2 class="text-xs font-bold text-slate-400 mb-8 text-center tracking-widest italic">“此刻，你希望我如何陪你重启？”</h2>
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="selectPersona('weiguang')" id="p-weiguang" class="persona-card group p-5 rounded-3xl text-left flex items-start space-x-3">
                     <span class="text-2xl group-hover:scale-125 transition-transform duration-500">☁️</span>
@@ -321,105 +279,32 @@
     </div>
 
     <script>
-        let apiKey = "";
-        function saveApiKey() {
-            const input = document.getElementById('apiKeyInput');
-            const key = input.value.trim();
-            
-            if (!key) {
-                alert("请输入API密钥");
-                return;
-            }
-            
-            if (!key.startsWith('sk-')) {
-                alert("密钥格式错误，应以'sk-'开头");
-                return;
-            }
-            
-            // 保存到浏览器本地存储
-            localStorage.setItem('deepseek_api_key', key);
-            apiKey = key;
-            
-            document.getElementById('apiKeySection').classList.add('hidden');
-            alert("✅ 密钥保存成功！\n\n密钥仅保存在你的浏览器中，刷新页面后需要重新输入。");
-            
-            // 清除演示模式的函数
-            if (window.callDeepSeek) delete window.callDeepSeek;
-            
-            // 自动选择第一个角色
-            selectPersona('weiguang');
-        }
-         function useDemoMode() {
-            apiKey = "demo_mode";
-            document.getElementById('apiKeySection').classList.add('hidden');
-            alert("🎭 进入演示模式\n\n使用模拟回复测试界面功能");
-            selectPersona('weiguang');
-            
-            // 重写API调用函数为模拟版本
-            window.callDeepSeek = async function(systemPrompt, userPrompt, isJson = false) {
-                // 模拟网络延迟
-                await new Promise(resolve => setTimeout(resolve, 800));
-                
-                if (isJson) {
-                    return JSON.stringify({
-                        feedback: "演示反馈：我理解你的感受",
-                        instruction: "演示指令：站起来伸展一下身体"
-                    });
-                }
-                
-                const demoReplies = {
-                    weiguang: ["我理解你的疲惫，慢慢来没关系", "你不需要立刻振作，感受当下的自己就好", "这种感受是正常的，我在这里陪着你"],
-                    kongshan: ["把注意力放在呼吸上，一呼一吸", "感受身体与周围环境的接触", "让杂念像云一样飘过"],
-                    lingjing: ["从认知角度看，这可能是...", "我们可以分析一下这个思维模式", "大脑有时候会放大我们的感受"],
-                    huohua: ["别想太多，直接行动！", "倒数5秒，立刻开始！", "完成比完美更重要"]
-                };
-                
-                const replies = demoReplies[currentP?.name] || ["我在这里陪伴你"];
-                return replies[Math.floor(Math.random() * replies.length)];
-            };
-        }
-            function checkSavedKey() {
-            const savedKey = localStorage.getItem('deepseek_api_key');
-            if (savedKey && savedKey.startsWith('sk-')) {
-                if (confirm("检测到保存的API密钥，是否使用？")) {
-                    apiKey = savedKey;
-                    document.getElementById('apiKeySection').classList.add('hidden');
-                }
-            }
-        }
+        // CRITICAL: apiKey MUST be an empty string for the environment to inject it correctly.
+        const apiKey = "sk-af6695545955495d90b94afe60e73aef"; 
         lucide.createIcons();
-
-        // 安全保存API密钥（只存在用户电脑）
-        
-
-        // 演示模式（不需要API密钥）
-       
-
-        // 页面加载时检查是否有保存的密钥
-    
 
         const personas = {
             weiguang: { 
                 name: "微光", icon: "☁️", theme: "#fbbf24", bg: "linear-gradient(135deg, #fffcf0 0%, #fff7ed 100%)", 
-                systemPrompt: "你叫微光。你是运用'接纳与承诺疗法(ACT)'的心理陪伴者。对话特征：柔和、温润、不过长，表达清晰。",
+                systemPrompt: "你叫微光。你是运用‘接纳与承诺疗法(ACT)’的心理陪伴者。对话特征：柔和、温润、不过长，表达清晰。",
                 welcome: "我是微光。我能感觉到你的疲惫，我们不需要立刻振作，哪怕只是坐一会儿也好。哪里让你觉得不舒服？", 
                 placeholder: "此时是不是有点疲惫了？" 
             },
             kongshan: { 
                 name: "空山", icon: "🍃", theme: "#34d399", bg: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)", 
-                systemPrompt: "你叫空山。你是'具身认知'与'正念'导师。对话特征：极简、清冷、零情感负担。不要过长，表达清晰。",
+                systemPrompt: "你叫空山。你是‘具身认知’与‘正念’导师。对话特征：极简、清冷、零情感负担。不要过长，表达清晰。",
                 welcome: "我是空山。世界在流动，而你陷在思维的死角里。告诉我，你大脑里最吵的声音在重复什么？", 
                 placeholder: "写下那个杂念，把它从脑中剥离..." 
             },
             lingjing: { 
                 name: "棱镜", icon: "💠", theme: "#38bdf8", bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)", 
-                systemPrompt: "你叫棱镜。你是基于'脑科学'与'CBT'的认知教练。对话特征：客观、精准、充满洞察力。不要过长，表达清晰。",
+                systemPrompt: "你叫棱镜。你是基于‘脑科学’与‘CBT’的认知教练。对话特征：客观、精准、充满洞察力。不要过长，表达清晰。",
                 welcome: "我是棱镜。多巴胺正在干扰你的前额叶皮层。具体的逻辑困扰是什么？我们来拆解它。", 
                 placeholder: "让我们停下来认真的思考下当下吧。" 
             },
             huohua: { 
                 name: "火花", icon: "🔥", theme: "#f87171", bg: "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)", 
-                systemPrompt: "你叫火花。你是运用'行为激活(BA)'与'五秒法则'的行动教练。对话特征：短促、有力、高节奏感。不要过长，表达清晰。",
+                systemPrompt: "你叫火花。你是运用‘行为激活(BA)’与‘五秒法则’的行动教练。对话特征：短促、有力、高节奏感。不要过长，表达清晰。",
                 welcome: "我是火花。别在那儿思考人生了，那只是逃避的陷阱。直接说，你现在最不敢面对的那项任务是什么？", 
                 placeholder: "说出那个任务，名字就行。" 
             }
@@ -515,80 +400,48 @@
             }
         }
 
-        async function callDeepSeek(systemPrompt, userPrompt, isJson = false) {
-            // 如果是演示模式，使用模拟回复
-            if (apiKey === "demo_mode") {
-                return window.callDeepSeek ? await window.callDeepSeek(systemPrompt, userPrompt, isJson) : "演示模式回复";
+       async function callGemini(systemPrompt, userPrompt, isJson = false) {
+    // DeepSeek API 标准地址
+    const url = "https://api.deepseek.com/chat/completions"; 
+
+    const payload = {
+        model: "deepseek-chat", // 使用 DeepSeek 的通用对话模型
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+        ],
+        // 如果需要 JSON 格式输出，DeepSeek 支持设置 response_format
+        response_format: isJson ? { type: "json_object" } : { type: "text" },
+        temperature: 0.7
+    };
+
+    for (let i = 0; i < 3; i++) { // 尝试 3 次
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}` // 身份验证
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error('API 返回错误:', errorData);
+                throw new Error('API Error');
             }
-            
-            // 检查API密钥
-            if (!apiKey || !apiKey.startsWith('sk-')) {
-                alert("请先设置有效的API密钥");
-                document.getElementById('apiKeySection').classList.remove('hidden');
-                return null;
-            }
-            
-            const url = `https://api.deepseek.com/chat/completions`;
-            
-            // 如果是JSON格式请求，在提示词中说明
-            let finalPrompt = userPrompt;
-            if (isJson) {
-                finalPrompt = `${userPrompt}\n\n请严格按照以下JSON格式回复：{"feedback": "一句简短的反馈", "instruction": "一个具体的物理动作指令"}`;
-            }
-            
-            const payload = {
-                model: "deepseek-chat",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: finalPrompt }
-                ],
-                temperature: 0.7,
-                max_tokens: 500,
-                stream: false
-            };
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error("API错误:", response.status, errorText);
-                    
-                    if (response.status === 402) {
-                        alert("❌ API密钥问题\n\n可能原因：\n1. 密钥无效或已撤销\n2. 账户余额不足\n3. 密钥权限问题\n\n请检查密钥或进入演示模式");
-                        document.getElementById('apiKeySection').classList.remove('hidden');
-                    } else if (response.status === 429) {
-                        alert("⏳ 请求过于频繁，请稍后重试");
-                    } else {
-                        alert(`API请求失败 (${response.status})`);
-                    }
-                    return null;
-                }
-                
-                const data = await response.json();
-                const content = data.choices?.[0]?.message?.content;
-                
-                if (!content) {
-                    alert("API返回内容为空");
-                    return null;
-                }
-                
-                return content;
-                
-            } catch (error) {
-                console.error("网络错误:", error);
-                alert("网络连接失败，请检查网络");
-                return null;
-            }
+
+            const data = await res.json();
+            // DeepSeek 的返回路径：choices[0].message.content
+            return data.choices?.[0]?.message?.content || null;
+        } catch (e) {
+            console.warn(`第 ${i + 1} 次请求失败，正在重试...`, e);
+            if (i === 2) return null;
+            await new Promise(r => setTimeout(r, 1000));
         }
+    }
+}
 
         document.getElementById('btn-start-reboot').onclick = async () => {
             if(!currentP) return;
@@ -600,11 +453,11 @@
             const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
             const prompt = `用户评分：${score}/100；倾诉：${userInput}。请输出JSON: {"feedback": "1句回应", "instruction": "1个具体的物理动作动作指令"}`;
 
-            const res = await callDeepSeek(currentP.systemPrompt, prompt, true);
+            const res = await callGemini(currentP.systemPrompt, prompt, true);
             if(res) {
                 const data = JSON.parse(res);
                 currentInstruction = sanitizeText(data.instruction);
-                document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">"${sanitizeText(data.feedback)}"</span><strong class="text-2xl">${currentInstruction}</strong>`;
+                document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
                 btn.classList.add('hidden');
                 document.getElementById('section-stage-1').classList.remove('hidden');
             }
@@ -631,5 +484,48 @@
             modal.classList.add('hidden');
             noteCount++;
             document.getElementById('section-results').classList.remove('hidden');
-            const container = document.getElementById('
+            const container = document.getElementById('sticky-note-container');
+            const noteDiv = document.createElement('div');
+            noteDiv.className = "sticky-note";
+            noteDiv.style.setProperty('--note-color', currentP.theme);
+            noteDiv.innerHTML = `
+                <div class="mb-2 text-[9px] text-slate-400 font-black uppercase tracking-widest">物理重启: ${currentInstruction}</div>
+                <div class="text-slate-700 font-serif text-sm">“${sanitizeText(noteText)}”</div>
+                <div class="mt-4 text-[9px] text-slate-300 font-bold">${new Date().toLocaleTimeString()}</div>
+            `;
+            container.appendChild(noteDiv);
+            if(noteCount >= MAX_NOTES) document.getElementById('limit-hint').classList.remove('hidden');
+            document.getElementById('note').value = "";
+            finishThisRound();
+        };
 
+        document.getElementById('send').onclick = async () => {
+            const input = document.getElementById('input');
+            const val = input.value.trim();
+            if(!val) return;
+            addMsg(val, true);
+            chatHistory.push({ role: "user", content: val });
+            input.value = "";
+
+            showLoading(); // 开始对话加载
+
+            const res = await callGemini(currentP.systemPrompt, val);
+            
+            hideLoading(); // 结束对话加载
+
+            if(res) { 
+                addMsg(res); 
+                chatHistory.push({ role: "assistant", content: res }); 
+            }
+        };
+
+        function updateEnv() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('date').innerText = now.getFullYear() + "." + (now.getMonth()+1).toString().padStart(2, '0') + "." + now.getDate().toString().padStart(2, '0');
+        }
+
+        window.onload = () => { updateEnv(); setInterval(updateEnv, 1000); fetchWeatherAndLocation(); };
+    </script>
+</body>
+</html>
