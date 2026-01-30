@@ -4,19 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瞬息重启 | Bridge to Reality</title>
-<script src="https://cdn.bootcdn.net/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
+    
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/3.0.0/cdn.min.js"></script>
+    
+    <script src="https://cdn.staticfile.org/lucide/0.263.0/lucide.min.js"></script>
 
     <style>
-        /* 强制覆盖字体，防止因 Google Fonts 加载失败导致的卡顿 */
+        /* 强制覆盖字体，防止卡顿 */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
         }
-        /* 以下为你源码中原有的 CSS 逻辑，保持不变即可 */
-        :root { --theme-primary: #334155; --theme-bg: #f8fafc; }
-        .glass-panel { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 32px; }
-        .persona-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid transparent; background: rgba(255, 255, 255, 0.3); }
-        /* ... 其他 CSS 保持不变 ... */
+
+        /* 手动补齐核心样式，防止 Tailwind 加载慢时页面全乱 */
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+            border-radius: 32px; 
+        }
+        .persona-card { 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 2px solid transparent; 
+            background: rgba(255, 255, 255, 0.3); 
+        }
+        .persona-card.active {
+            background: white !important;
+            border-color: var(--theme-color, #334155) !important;
+        }
+        .mood-slider {
+            -webkit-appearance: none;
+            width: 100%; height: 6px;
+            background: linear-gradient(to right, #94a3b8, #475569, #ef4444);
+            border-radius: 10px;
+        }
+        .chat-container { border: 1px solid rgba(0, 0, 0, 0.08); }
+        .sticky-note {
+            background: #fff; padding: 1.5rem; border-left: 6px solid var(--note-color, #334155);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05); min-width: 250px;
+        }
+        /* 隐藏滚动条 */
+        .custom-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
     
@@ -426,6 +455,7 @@
     </script>
 </body>
 </html>
+
 
 
 
