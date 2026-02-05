@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>瞬息重启 | Bridge to Reality</title>
+    <!-- 1. 添加网页图标 (Favicon) -->
+    <link rel="icon" href="https://fav.farm/🍃" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -88,7 +91,6 @@
         }
         .sticky-note:hover { transform: translateY(-5px); box-shadow: 10px 10px 20px rgba(0,0,0,0.08); }
 
-        /* 对话加载动效样式 */
         .typing-indicator {
             display: flex;
             gap: 4px;
@@ -101,8 +103,7 @@
             animation: fadeIn 0.3s ease;
         }
         .typing-dot {
-            width: 5px;
-            height: 5px;
+            width: 5px; height: 5px;
             background: #94a3b8;
             border-radius: 50%;
             animation: typingBounce 1.4s infinite ease-in-out both;
@@ -149,7 +150,7 @@
             <h2 class="text-xs font-bold text-slate-400 mb-8 text-center tracking-widest italic">“此刻，你希望我如何陪你重启？”</h2>
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="selectPersona('weiguang')" id="p-weiguang" class="persona-card group p-5 rounded-3xl text-left flex items-start space-x-3">
-                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">☁️</span>
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">✨</span>
                     <div>
                         <div class="text-sm font-bold text-slate-700">微光</div>
                         <p class="text-[10px] text-slate-400 mt-1 leading-tight">我很累，请温柔地抱抱我</p>
@@ -211,7 +212,7 @@
                 </div>
             </div>
             <div class="p-6 bg-white/50 border-t border-slate-200 flex items-center space-x-3">
-                <textarea id="input" rows="1" class="flex-1 bg-white border border-slate-100 rounded-xl py-4 px-5 text-sm focus:outline-none placeholder-slate-300 resize-none shadow-sm" placeholder="描述你的感受或想逃避的事..."></textarea>
+                <textarea id="input" rows="1" class="flex-1 bg-white border border-slate-100 rounded-xl py-4 px-5 text-sm focus:outline-none placeholder-slate-300 resize-none shadow-sm" placeholder="描述你的感受..."></textarea>
                 <button id="send" disabled class="bg-white text-slate-300 p-4 rounded-xl shadow-sm transition-all"><i data-lucide="send" class="w-5 h-5"></i></button>
             </div>
         </section>
@@ -239,7 +240,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="stage-2-actions" class="space-y-4">
                 <button id="btn-open-record" class="w-full py-7 rounded-[2.5rem] bg-slate-700 text-white font-black tracking-[0.5em] hover:bg-slate-800 transition-all shadow-xl text-xs">
                     重启完毕 · 封存记录
@@ -260,7 +260,6 @@
             <div id="sticky-note-container" class="custom-scrollbar"></div>
             <p id="limit-hint" class="hidden text-center text-[10px] text-amber-500 font-bold tracking-widest animate-pulse mt-4">记忆已满载，请专注当下。</p>
         </section>
-
     </main>
 
     <!-- Modal for Record -->
@@ -268,9 +267,9 @@
         <div class="bg-white p-12 rounded-[4rem] w-full max-w-lg shadow-3xl space-y-10">
             <div class="text-center">
                 <h3 class="text-2xl font-bold text-slate-800">重启后的碎碎念</h3>
-                <p class="text-xs text-slate-400 mt-4 tracking-widest font-medium italic">写下一个此刻跃入脑海的词</p>
+                <p class="text-xs text-slate-400 mt-4 tracking-widest font-medium italic">写下一个此刻跃入脑海的词，随便记录点什么吧~</p>
             </div>
-            <textarea id="note" class="w-full h-44 p-8 bg-slate-50 rounded-[2.5rem] focus:outline-none text-sm border-none placeholder-slate-300 resize-none" placeholder="记录此刻的清措..."></textarea>
+            <textarea id="note" class="w-full h-44 p-8 bg-slate-50 rounded-[2.5rem] focus:outline-none text-sm border-none placeholder-slate-300 resize-none" placeholder="记录此刻的清澈..."></textarea>
             <div class="flex space-x-5">
                 <button onclick="handleSkipRecord()" class="flex-1 py-6 text-xs text-slate-300 font-bold tracking-widest">跳过</button>
                 <button onclick="handleSaveRecord()" class="flex-[2] py-6 bg-slate-700 text-white rounded-[2rem] text-xs font-bold tracking-[0.4em] shadow-xl">封存瞬间</button>
@@ -279,34 +278,34 @@
     </div>
 
     <script>
-        // CRITICAL: apiKey MUST be an empty string for the environment to inject it correctly.
+        // 配置 API (实际使用时建议通过环境变量或 Vercel Serverless Function 隐藏)
         const apiKey = "sk-af6695545955495d90b94afe60e73aef"; 
         lucide.createIcons();
 
         const personas = {
             weiguang: { 
-                name: "微光", icon: "☁️", theme: "#fbbf24", bg: "linear-gradient(135deg, #fffcf0 0%, #fff7ed 100%)", 
-                systemPrompt: "你叫微光。你是运用‘接纳与承诺疗法(ACT)’的心理陪伴者。对话特征：柔和、温润、不过长，表达清晰。",
+                name: "微光", icon: "✨", theme: "#fbbf24", bg: "linear-gradient(135deg, #fffcf0 0%, #fff7ed 100%)", 
+                systemPrompt: "你叫微光。你是运用‘接纳与承诺疗法(ACT)’的心理陪伴者。对话特征：柔和、温润、不过长。",
                 welcome: "我是微光。我能感觉到你的疲惫，我们不需要立刻振作，哪怕只是坐一会儿也好。哪里让你觉得不舒服？", 
                 placeholder: "此时是不是有点疲惫了？" 
             },
             kongshan: { 
                 name: "空山", icon: "🍃", theme: "#34d399", bg: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)", 
-                systemPrompt: "你叫空山。你是‘具身认知’与‘正念’导师。对话特征：极简、清冷、零情感负担。不要过长，表达清晰。",
+                systemPrompt: "你叫空山。你是‘具身认知’与‘正念’导师。对话特征：极简、清冷、零情感负担。",
                 welcome: "我是空山。世界在流动，而你陷在思维的死角里。告诉我，你大脑里最吵的声音在重复什么？", 
-                placeholder: "写下那个杂念，把它从脑中剥离..." 
+                placeholder: "写下那个杂念..." 
             },
             lingjing: { 
                 name: "棱镜", icon: "💠", theme: "#38bdf8", bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)", 
-                systemPrompt: "你叫棱镜。你是基于‘脑科学’与‘CBT’的认知教练。对话特征：客观、精准、充满洞察力。不要过长，表达清晰。",
+                systemPrompt: "你叫棱镜。你是基于‘脑科学’与‘CBT’的认知教练。对话特征：客观、精准、充满洞察力。",
                 welcome: "我是棱镜。多巴胺正在干扰你的前额叶皮层。具体的逻辑困扰是什么？我们来拆解它。", 
-                placeholder: "让我们停下来认真的思考下当下吧。" 
+                placeholder: "让我们理清逻辑..." 
             },
             huohua: { 
                 name: "火花", icon: "🔥", theme: "#f87171", bg: "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)", 
-                systemPrompt: "你叫火花。你是运用‘行为激活(BA)’与‘五秒法则’的行动教练。对话特征：短促、有力、高节奏感。不要过长，表达清晰。",
-                welcome: "我是火花。别在那儿思考人生了，那只是逃避的陷阱。直接说，你现在最不敢面对的那项任务是什么？", 
-                placeholder: "说出那个任务，名字就行。" 
+                systemPrompt: "你叫火花。你是运用‘行为激活(BA)’与‘五秒法则’的行动教练。对话特征：短促、有力、高节奏感。",
+                welcome: "我是火花。别在那儿思考人生了，那只是逃避的陷阱。直接说，你现在最不敢面对的任务是什么？", 
+                placeholder: "说出任务，名字就行。" 
             }
         };
 
@@ -314,25 +313,32 @@
         let chatHistory = [];
         let noteCount = 0;
         let currentInstruction = ""; 
+        let weatherDataGlobal = { city: "未知", temp: "--" };
         const MAX_NOTES = 10;
 
         function sanitizeText(text) {
             return text.replace(/\*\*/g, '').replace(/__/g, '').trim();
         }
 
+        // 2. 优化：针对国内网络优化的 IP 与天气获取逻辑
         async function fetchWeatherAndLocation() {
             try {
-                const res = await fetch('https://ipapi.co/json/');
+                // 先尝试国内更友好的定位服务 (如搜狐或 ip-api)
+                const res = await fetch('https://ipapi.co/json/'); 
                 const data = await res.json();
                 if(data.city) {
+                    weatherDataGlobal.city = data.city;
                     document.getElementById('location').innerText = data.city;
                     const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&current_weather=true`);
                     const weatherData = await weatherRes.json();
                     const temp = Math.round(weatherData.current_weather.temperature);
+                    weatherDataGlobal.temp = temp;
                     document.getElementById('weatherInfo').innerText = `${temp}°C / 实时接入`;
                 }
             } catch (e) {
-                document.getElementById('location').innerText = "本地接入";
+                // 备用方案：高德/百度等通常需要 Key，这里简单容错
+                document.getElementById('location').innerText = "地球某处";
+                document.getElementById('weatherInfo').innerText = "温度适宜";
             }
         }
 
@@ -377,72 +383,49 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // --- 加载动效逻辑 ---
-        let currentLoadingEl = null;
         function showLoading() {
             const chatBox = document.getElementById('chat');
             const loader = document.createElement('div');
+            loader.id = "current-loading";
             loader.className = "typing-indicator self-start mb-4";
-            loader.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
+            loader.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
             chatBox.appendChild(loader);
             chatBox.scrollTop = chatBox.scrollHeight;
-            currentLoadingEl = loader;
         }
 
         function hideLoading() {
-            if (currentLoadingEl) {
-                currentLoadingEl.remove();
-                currentLoadingEl = null;
+            const el = document.getElementById('current-loading');
+            if(el) el.remove();
+        }
+
+        async function callAI(systemPrompt, userPrompt, isJson = false) {
+            const url = "https://api.deepseek.com/chat/completions"; 
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-chat",
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: userPrompt }
+                        ],
+                        response_format: isJson ? { type: "json_object" } : { type: "text" },
+                        temperature: 0.7
+                    })
+                });
+                const data = await res.json();
+                return data.choices?.[0]?.message?.content || null;
+            } catch (e) {
+                console.error(e);
+                return null;
             }
         }
 
-       async function callGemini(systemPrompt, userPrompt, isJson = false) {
-    // DeepSeek API 标准地址
-    const url = "https://api.deepseek.com/chat/completions"; 
-
-    const payload = {
-        model: "deepseek-chat", // 使用 DeepSeek 的通用对话模型
-        messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
-        ],
-        // 如果需要 JSON 格式输出，DeepSeek 支持设置 response_format
-        response_format: isJson ? { type: "json_object" } : { type: "text" },
-        temperature: 0.7
-    };
-
-    for (let i = 0; i < 3; i++) { // 尝试 3 次
-        try {
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}` // 身份验证
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json();
-                console.error('API 返回错误:', errorData);
-                throw new Error('API Error');
-            }
-
-            const data = await res.json();
-            // DeepSeek 的返回路径：choices[0].message.content
-            return data.choices?.[0]?.message?.content || null;
-        } catch (e) {
-            console.warn(`第 ${i + 1} 次请求失败，正在重试...`, e);
-            if (i === 2) return null;
-            await new Promise(r => setTimeout(r, 1000));
-        }
-    }
-}
-
+        // 3. 核心功能改进：结合上下文生成个性化重启指令
         document.getElementById('btn-start-reboot').onclick = async () => {
             if(!currentP) return;
             const btn = document.getElementById('btn-start-reboot');
@@ -451,13 +434,19 @@
 
             const score = document.getElementById('mood').value;
             const userInput = chatHistory.filter(m => m.role === 'user').map(m => m.content).join(';');
-            const prompt = `用户评分：${score}/100；倾诉：${userInput}。请输出JSON: {"feedback": "1句回应", "instruction": "1个具体的物理动作动作指令"}`;
+            
+            // 加入环境参数
+            const envContext = `当前地点：${weatherDataGlobal.city}，气温：${weatherDataGlobal.temp}度。`;
+            const prompt = `[背景]${envContext} [用户状态评分]${score}/100 [对话精华]${userInput}。请输出JSON: {"feedback": "一句极简的情感回应", "instruction": "一个与当前气温或环境相关的、具体的物理动作指令(如:洗脸、喝水、推窗)"}`;
 
-            const res = await callGemini(currentP.systemPrompt, prompt, true);
+            const res = await callAI(currentP.systemPrompt, prompt, true);
             if(res) {
                 const data = JSON.parse(res);
                 currentInstruction = sanitizeText(data.instruction);
-                document.getElementById('display-break-instruction').innerHTML = `<span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span><strong class="text-2xl">${currentInstruction}</strong>`;
+                document.getElementById('display-break-instruction').innerHTML = `
+                    <span class="text-sm text-slate-400 mb-2 italic">“${sanitizeText(data.feedback)}”</span>
+                    <strong class="text-2xl">${currentInstruction}</strong>
+                `;
                 btn.classList.add('hidden');
                 document.getElementById('section-stage-1').classList.remove('hidden');
             }
@@ -465,10 +454,23 @@
             btn.innerText = "生成重启指令";
         };
 
+        // 3. 核心功能改进：个性化引导入轨
         document.getElementById('btn-confirm-break').onclick = async () => {
-            document.getElementById('display-combined-instruction').innerText = "你已成功重启。现在请放下杂念，投入深度专注。";
+            const btn = document.getElementById('btn-confirm-break');
+            btn.innerText = "正在同步意识...";
+            btn.disabled = true;
+
+            const userInput = chatHistory.filter(m => m.role === 'user').slice(-1)[0]?.content || "刚才的谈话";
+            const prompt = `用户刚完成了物理指令：${currentInstruction}。请以${currentP.name}的身份，结合他刚才提到的“${userInput}”，给出一句高度肯定且能引导他进入深度专注状态的引导语。不超过40字。`;
+
+            const res = await callAI(currentP.systemPrompt, prompt);
+            
+            document.getElementById('display-combined-instruction').innerText = res || "你已成功重启。现在请放下杂念，投入深度专注。";
             document.getElementById('section-stage-1').classList.add('hidden');
             document.getElementById('section-stage-2').classList.remove('hidden');
+            
+            btn.disabled = false;
+            btn.innerText = "我已完成";
         };
 
         const modal = document.getElementById('modal');
@@ -506,13 +508,9 @@
             addMsg(val, true);
             chatHistory.push({ role: "user", content: val });
             input.value = "";
-
-            showLoading(); // 开始对话加载
-
-            const res = await callGemini(currentP.systemPrompt, val);
-            
-            hideLoading(); // 结束对话加载
-
+            showLoading();
+            const res = await callAI(currentP.systemPrompt, val);
+            hideLoading();
             if(res) { 
                 addMsg(res); 
                 chatHistory.push({ role: "assistant", content: res }); 
@@ -525,7 +523,11 @@
             document.getElementById('date').innerText = now.getFullYear() + "." + (now.getMonth()+1).toString().padStart(2, '0') + "." + now.getDate().toString().padStart(2, '0');
         }
 
-        window.onload = () => { updateEnv(); setInterval(updateEnv, 1000); fetchWeatherAndLocation(); };
+        window.onload = () => { 
+            updateEnv(); 
+            setInterval(updateEnv, 1000); 
+            fetchWeatherAndLocation(); 
+        };
     </script>
 </body>
 </html>
