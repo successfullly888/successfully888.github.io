@@ -320,25 +320,37 @@
             return text.replace(/\*\*/g, '').replace(/__/g, '').trim();
         }
 
-        // 2. 优化：针对国内网络优化的 IP 与天气获取逻辑
         async function fetchWeatherAndLocation() {
             try {
-                // 先尝试国内更友好的定位服务 (如搜狐或 ip-api)
-                const res = await fetch('https://ipapi.co/json/'); 
-                const data = await res.json();
-                if(data.city) {
+                // 第一步：使用国内最稳定的搜狐 IP 库获取城市
+                // 这种方式不需要 Key，且在国内几乎不会挂掉
+                const ipRes = await fetch('https://api.ip.sb/geoip');
+                const data = await ipRes.json();
+                
+                if (data && data.city) {
+                    // 更新全局变量和 UI
                     weatherDataGlobal.city = data.city;
                     document.getElementById('location').innerText = data.city;
+
+                    // 第二步：使用坐标请求天气 (open-meteo 在国内依然可用，因为它不需要密钥)
                     const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.latitude}&longitude=${data.longitude}&current_weather=true`);
                     const weatherData = await weatherRes.json();
-                    const temp = Math.round(weatherData.current_weather.temperature);
-                    weatherDataGlobal.temp = temp;
-                    document.getElementById('weatherInfo').innerText = `${temp}°C / 实时接入`;
+                    
+                    if (weatherData && weatherData.current_weather) {
+                        const temp = Math.round(weatherData.current_weather.temperature);
+                        weatherDataGlobal.temp = temp;
+                        document.getElementById('weatherInfo').innerText = `${temp}°C / 气流稳定`;
+                    }
+                } else {
+                    throw new Error('定位解析失败');
                 }
             } catch (e) {
-                // 备用方案：高德/百度等通常需要 Key，这里简单容错
-                document.getElementById('location').innerText = "地球某处";
-                document.getElementById('weatherInfo').innerText = "温度适宜";
+                console.log("定位获取失败，使用默认值:", e);
+                // 即使完全断网，也给用户一个优雅的默认值
+                document.getElementById('location').innerText = "此时此刻";
+                document.getElementById('weatherInfo').innerText = "感官恒温";
+                weatherDataGlobal.city = "城市";
+                weatherDataGlobal.temp = "25";
             }
         }
 
@@ -531,3 +543,4 @@
     </script>
 </body>
 </html>
+
