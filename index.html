@@ -469,7 +469,7 @@
         // 3. 核心功能改进：个性化引导入轨
         document.getElementById('btn-confirm-break').onclick = async () => {
             const btn = document.getElementById('btn-confirm-break');
-            btn.innerText = "正在同步意识...";
+            btn.innerText = "正在过渡与入轨...";
             btn.disabled = true;
 
             const userInput = chatHistory.filter(m => m.role === 'user').slice(-1)[0]?.content || "刚才的谈话";
@@ -543,4 +543,5 @@
     </script>
 </body>
 </html>
+
 
