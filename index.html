@@ -278,8 +278,7 @@
     </div>
 
     <script>
-        // 配置 API (实际使用时建议通过环境变量或 Vercel Serverless Function 隐藏)
-        const apiKey = "sk-af6695545955495d90b94afe60e73aef"; 
+
         lucide.createIcons();
 
         const personas = {
@@ -410,32 +409,33 @@
             if(el) el.remove();
         }
 
-        async function callAI(systemPrompt, userPrompt, isJson = false) {
-            const url = "https://api.deepseek.com/chat/completions"; 
-            try {
-                const res = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "deepseek-chat",
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: userPrompt }
-                        ],
-                        response_format: isJson ? { type: "json_object" } : { type: "text" },
-                        temperature: 0.7
-                    })
-                });
-                const data = await res.json();
-                return data.choices?.[0]?.message?.content || null;
-            } catch (e) {
-                console.error(e);
-                return null;
-            }
-        }
+// ✅ 修改后的安全版本
+async function callAI(systemPrompt, userPrompt, isJson = false) {
+    // 1. 指向你自己的 Vercel 后端接口（我们在第三步创建的文件）
+    const url = "/api/chat"; 
+    
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // 2. 将系统提示词、用户输入、是否需要JSON等信息传给后端代办员
+            body: JSON.stringify({
+                systemPrompt: systemPrompt,
+                userPrompt: userPrompt,
+                isJson: isJson
+            })
+        });
+        
+        const data = await res.json();
+        // 3. 返回代办员传回的 AI 回答
+        return data.choices?.[0]?.message?.content || null;
+    } catch (e) {
+        console.error("调用代办员失败:", e);
+        return null;
+    }
+}
 
         // 3. 核心功能改进：结合上下文生成个性化重启指令
         document.getElementById('btn-start-reboot').onclick = async () => {
@@ -543,5 +543,6 @@
     </script>
 </body>
 </html>
+
 
 
